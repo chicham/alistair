@@ -10,4 +10,10 @@ from setuptools import setup
 #     ],
 # },
 
-setup(use_scm_version=True)
+setup(
+    use_scm_version={
+        "write_to": "src/{{ cookiecutter.project_slug }}/version.py",
+        "write_to_template": '__version__ = "{version}"',
+        "tag_regex": r"^(?P<prefix>v)?(?P<version>[^\+]+)(?P<suffix>.*)?$",
+    }
+)
