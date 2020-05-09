@@ -9,6 +9,7 @@
     "project_remote": ["git@{{ cookiecutter.remote_host }}/{{ cookiecutter.project_slug }}.git", "https://{{ cookiecutter.remote_host }}/{{ cookiecutter.username }}/{{ cookiecutter.project_slug }}.git"],
     "project_short_description": "Python Boilerplate contains all the boilerplate you need to create a Python package.",
     "add_pyup_badge": "n",
+    "direnv_layout": ["anaconda", "pyenv", "pipenv"],
     "create_author_file": "y",
     "open_source_license": ["MIT license", "BSD license", "ISC license", "Apache Software License 2.0", "GNU General Public License v3", "Not open source"]
 }

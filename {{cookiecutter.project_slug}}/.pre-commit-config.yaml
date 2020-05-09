@@ -85,5 +85,4 @@ repos:
             name: pytest
             entry: pytest
             language: python
-            stages: [push]
-            types: [python]
+            pass_filenames: false
