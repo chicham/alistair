@@ -31,7 +31,14 @@ def init_git():
         ["git", "remote", "add", "origin", "{{ cookiecutter.project_remote }}"]
     )
     subprocess.run(
-        ["git", "remote", "set-url", "--push", "{{ cookiecutter.project_remote }}"]
+        [
+            "git",
+            "remote",
+            "set-url",
+            "--push",
+            "origin",
+            "{{ cookiecutter.project_remote }}",
+        ]
     )
 
 

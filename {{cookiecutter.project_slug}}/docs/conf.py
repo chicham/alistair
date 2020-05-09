@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# flake8: noqa
 #
 # {{ cookiecutter.project_slug }} documentation build configuration file, created by
 # sphinx-quickstart on Fri Jun  9 13:47:02 2017.
@@ -23,18 +22,43 @@ import sys
 
 from pkg_resources import get_distribution
 
-sys.path.insert(0, os.path.abspath(".."))
+# sys.path.insert(0, os.path.abspath(".."))
 
 
 # -- General configuration ---------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #
-# needs_sphinx = '1.0'
+needs_sphinx = "1.6"
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ["sphinx.ext.autodoc", "sphinx.ext.viewcode"]
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.coverage",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.autosectionlabel",
+    "sphinxcontrib.katex",
+    "sphinx.ext.viewcode",
+]
+
+# build the templated autosummary files
+autosummary_generate = True
+numpydoc_show_class_members = False
+
+# autosectionlabel throws warnings if section names are duplicated.
+# The following tells autosectionlabel to not throw a warning for
+# duplicated section names that are in different documents.
+autosectionlabel_prefix_document = True
+
+# katex options
+#
+#
+
+katex_prerender = True
+
+napoleon_use_ivar = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -42,16 +66,15 @@ templates_path = ["_templates"]
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-# source_suffix = ['.rst', '.md']
-source_suffix = ".rst"
+source_suffix = [".rst", ".md"]
 
 # The master toctree document.
 master_doc = "index"
 
 # General information about the project.
 project = "{{ cookiecutter.project_name }}"
-copyright = "{% now 'local', '%Y' %}, {{ cookiecutter.full_name }}"
-author = "{{ cookiecutter.full_name }}"
+copyright = "{% now 'local', '%Y' %}, {{ cookiecutter.project_name }} Contributors"
+author = "{{ cookiecutter.project_name }} Contributors"
 
 # The version info for the project you're documenting, acts as replacement
 # for |version| and |release|, also used in various other places throughout
@@ -78,8 +101,10 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 pygments_style = "sphinx"
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = False
+todo_include_todos = True
 
+# Disable docstring inheritance
+autodoc_inherit_docstrings = False
 
 # -- Options for HTML output -------------------------------------------
 
@@ -104,6 +129,22 @@ html_static_path = ["_static"]
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = "{{ cookiecutter.project_slug }}doc"
+
+
+# Called automatically by Sphinx, making this `conf.py` an "extension".
+def setup(app):
+    # NOTE: in Sphinx 1.8+ `html_css_files` is an official configuration value
+    # and can be moved outside of this function (and the setup(app) function
+    # can be deleted).
+    html_css_files = [
+        "https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css"
+    ]
+
+    # In Sphinx 1.8 it was renamed to `add_css_file`, 1.7 and prior it is
+    # `add_stylesheet` (deprecated in 1.8).
+    add_css = getattr(app, "add_css_file", app.add_stylesheet)
+    for css_file in html_css_files:
+        add_css(css_file)
 
 
 # -- Options for LaTeX output ------------------------------------------
@@ -131,7 +172,7 @@ latex_documents = [
         master_doc,
         "{{ cookiecutter.project_slug }}.tex",
         "{{ cookiecutter.project_name }} Documentation",
-        "{{ cookiecutter.full_name }}",
+        "{{ cookiecutter.project_slug }} Contributors",
         "manual",
     ),
 ]

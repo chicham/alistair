@@ -10,6 +10,7 @@
     "project_short_description": "Python Boilerplate contains all the boilerplate you need to create a Python package.",
     "add_pyup_badge": "n",
     "direnv_layout": ["anaconda", "pyenv", "pipenv"],
+    "docker_image": ["nvcr.io/nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04", "python:{{ cookiecutter.pyver }}-slim", "nvcr.io/nvidia/cuda:10.1-cudnn7-devel-ubuntu16.04", "nvcr.io/nvidia/cuda:10.1-runtime"],
     "create_author_file": "y",
     "open_source_license": ["MIT license", "BSD license", "ISC license", "Apache Software License 2.0", "GNU General Public License v3", "Not open source"]
 }
