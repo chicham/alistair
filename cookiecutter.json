@@ -1,0 +1,14 @@
+{
+    "full_name": "Qwant Research",
+    "email": "research@qwant.com",
+    "username": "QwantResearch",
+    "remote_host": ["git.qwant.ninja", "github.com", "gitlab.com"],
+    "pyver": ["3.7", "3.8", "3.6"],
+    "project_name": "Python Boilerplate",
+    "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_').replace('-', '_') }}",
+    "project_remote": ["git@{{ cookiecutter.remote_host }}/{{ cookiecutter.project_slug }}.git", "https://{{ cookiecutter.remote_host }}/{{ cookiecutter.username }}/{{ cookiecutter.project_slug }}.git"],
+    "project_short_description": "Python Boilerplate contains all the boilerplate you need to create a Python package.",
+    "add_pyup_badge": "n",
+    "create_author_file": "y",
+    "open_source_license": ["MIT license", "BSD license", "ISC license", "Apache Software License 2.0", "GNU General Public License v3", "Not open source"]
+}

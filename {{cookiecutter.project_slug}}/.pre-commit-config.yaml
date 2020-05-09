@@ -1,0 +1,89 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+#
+repos:
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v2.5.0
+      hooks:
+          - id: trailing-whitespace
+          - id: end-of-file-fixer
+          - id: check-added-large-files
+          - id: check-docstring-first
+          - id: check-merge-conflict
+          - id: debug-statements
+          - id: name-tests-test
+    - repo: https://github.com/asottile/seed-isort-config
+      rev: v2.1.1
+      hooks:
+          - id: seed-isort-config
+    - repo: https://github.com/asottile/blacken-docs
+      rev: v1.6.0
+      hooks:
+          - id: blacken-docs
+    - repo: https://github.com/asottile/yesqa
+      rev: v1.1.0
+      hooks:
+          - id: yesqa
+    - repo: https://github.com/asottile/setup-cfg-fmt
+      rev: v1.9.0
+      hooks:
+          - id: setup-cfg-fmt
+    - repo: https://github.com/asottile/pyupgrade
+      rev: v1.26.2
+      hooks:
+          - id: pyupgrade
+            args: [--py3-plus]
+    - repo: https://github.com/asottile/add-trailing-comma
+      rev: v2.0.1
+      hooks:
+          - id: add-trailing-comma
+    - repo: https://github.com/Yelp/detect-secrets
+      rev: v0.13.1
+      hooks:
+          - id: detect-secrets
+    - repo: local
+      hooks:
+          - id: black
+            name: black
+            language: system
+            entry: black
+            types: [python]
+            args: [--include="(src|tests)/"]
+          - id: isort
+            name: isort
+            entry: isort
+            language: system
+            types: [python]
+          - id: flake8
+            name: flake8
+            entry: flake8
+            language: system
+            types: [python]
+          - id: vulture
+            name: vulture
+            entry: vulture
+            language: system
+            types: [python]
+            args: [--sort-by-size, --min-confidence=90]
+          - id: bandit
+            name: bandit
+            entry: bandit
+            language: system
+            types: [python]
+          - id: yamllint
+            name: yamllint
+            description: This hook runs yamllint.
+            entry: yamllint
+            language: python
+            types: [file, yaml]
+          - id: pytype
+            name: pytype
+            entry: pytype
+            language: python
+            types: [python]
+          - id: pytest
+            name: pytest
+            entry: pytest
+            language: python
+            stages: [push]
+            types: [python]
