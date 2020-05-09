@@ -24,6 +24,8 @@ With cookiecutter installed, the cookiecutter-conda-python template can be insta
 
     $ cookiecutter https://github.com/chicham/alistair.git
 
+Also [direnv](https://direnv.net/) must be installed and configured (https://github.com/direnv/direnv/wiki/Python) to allow auto activation of virtual environment.
+
 Once cookiecutter clones the template, you will be asked a series of questions related to your project::
 
 ## Usage
