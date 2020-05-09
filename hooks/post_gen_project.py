@@ -50,6 +50,7 @@ def install():
         cmd = ["pip", "install", "-e", ".[dev,test,docs]"]
         if "{{ cookiecutter.direnv_layout }} == conda":
             cmd = ["conda", "run", "-n", "{{ cookiecutter.project_slug }}"] + cmd
+
         subprocess.run(cmd)
 
 
@@ -80,15 +81,10 @@ def create_venv():
             "{{ cookiecutter.project_slug }}",
             "python={{ cookiecutter.pyver }}",
         ]
-    elif layout == "pyenv":
-        cmd = [
-            "pyenv",
-            "virtualenv",
-            "{{ cookiecutter.pyver }}",
-            "{{ cookiecutter.project_slug }}",
-        ]
     elif layout == "pipenv":
         cmd = ["pipenv", "--python", "{{ cookiecutter.pyver }}"]
+    else:
+        cmd = ["echo", "No venv"]
 
     subprocess.run(cmd)
 
@@ -103,7 +99,7 @@ if __name__ == "__main__":
         remove_file("LICENSE")
 
     create_venv()
-    dir_env()
     init_git()
     install()
+    dir_env()
     pre_commit()

@@ -17,9 +17,6 @@
 # relative to the documentation root, use os.path.abspath to make it
 # absolute, like shown here.
 #
-import os
-import sys
-
 from pkg_resources import get_distribution
 
 # sys.path.insert(0, os.path.abspath(".."))
@@ -137,7 +134,7 @@ def setup(app):
     # and can be moved outside of this function (and the setup(app) function
     # can be deleted).
     html_css_files = [
-        "https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css"
+        "https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css",
     ]
 
     # In Sphinx 1.8 it was renamed to `add_css_file`, 1.7 and prior it is
