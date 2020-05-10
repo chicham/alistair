@@ -76,6 +76,7 @@ repos:
             entry: yamllint
             language: python
             types: [file, yaml]
+            args: [-d=relaxed]
           - id: pytype
             name: pytype
             entry: pytype
