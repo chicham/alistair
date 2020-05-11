@@ -71,6 +71,7 @@ def dir_env():
 
 def create_venv():
     layout = "{{ cookiecutter.direnv_layout }}"
+    cmd = None
     if layout == "anaconda":
         cmd = [
             "conda",
@@ -84,9 +85,10 @@ def create_venv():
     elif layout == "pipenv":
         cmd = ["pipenv", "--python", "{{ cookiecutter.pyver }}"]
     else:
-        cmd = ["echo", "No venv"]
+        pass
 
-    subprocess.run(cmd)
+    if cmd:
+        subprocess.run(cmd)
 
 
 if __name__ == "__main__":
