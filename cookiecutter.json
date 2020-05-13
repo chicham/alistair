@@ -1,7 +1,7 @@
 {
     "full_name": "Qwant Research",
-    "email": "research@qwant.com",
-    "username": "QwantResearch",
+    "username": "{{'.'.join([cookiecutter.full_name.split(' ')[0][0].lower(), cookiecutter.full_name.split(' ')[1].lower()])}}",
+    "email": "{{cookiecutter.username}}@qwant.com",
     "remote_host": ["git.qwant.ninja", "github.com", "gitlab.com"],
     "pyver": ["3.7", "3.8", "3.6"],
     "project_name": "Python Boilerplate",

@@ -41,6 +41,19 @@ repos:
       rev: v0.13.1
       hooks:
           - id: detect-secrets
+    - repo: https://github.com/jazzband/pip-tools
+      rev: 5.0.0
+      hooks:
+          - id: pip-compile
+            name: pip-compile-dev
+            files: ^requirements/(dev)\.(in|txt)$
+            args: [requirements/dev.in]
+            stages: [push]
+          - id: pip-compile
+            name: pip-compile-docs
+            files: ^requirements/(docs)\.(in|txt)$
+            args: [requirements/docs.in]
+            stages: [push]
     - repo: local
       hooks:
           - id: black
@@ -48,7 +61,7 @@ repos:
             language: system
             entry: black
             types: [python]
-            args: [--include="(src|tests)/"]
+            args: [--include="(src|tests|scripts)/"]
           - id: isort
             name: isort
             entry: isort
@@ -59,6 +72,18 @@ repos:
             entry: flake8
             language: system
             types: [python]
+          - id: yamllint
+            name: yamllint
+            description: This hook runs yamllint.
+            entry: yamllint
+            language: python
+            types: [file, yaml]
+            args: [-d=relaxed]
+          - id: pytest
+            name: pytest
+            entry: pytest
+            language: python
+            pass_filenames: false
           - id: vulture
             name: vulture
             entry: vulture
@@ -70,20 +95,9 @@ repos:
             entry: bandit
             language: system
             types: [python]
-          - id: yamllint
-            name: yamllint
-            description: This hook runs yamllint.
-            entry: yamllint
-            language: python
-            types: [file, yaml]
-            args: [-d=relaxed]
+            args: [-c=.bandit.yaml]
           - id: pytype
             name: pytype
             entry: pytype
             language: python
             types: [python]
-          - id: pytest
-            name: pytest
-            entry: pytest
-            language: python
-            pass_filenames: false
