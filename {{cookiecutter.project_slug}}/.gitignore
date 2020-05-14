@@ -112,3 +112,4 @@ dmypy.json
 # Pytype type checker
 .pytype/
 **/outputs
+.direnv

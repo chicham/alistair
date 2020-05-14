@@ -3,6 +3,7 @@ import os
 import subprocess
 import warnings
 import ast
+from distutils import spawn
 
 PROJECT_DIRECTORY = os.path.realpath(os.path.curdir)
 
@@ -19,11 +20,23 @@ def subprocess_error(msg):
 
     return decorator
 
+def command_exists(cmd):
+    def decorator(f):
+        def wrapper(*args, **kwargs):
+            if spawn.find_executable(cmd):
+                return f(*args, **kwargs)
+            else:
+                warnings.warn("Command %s is not in path", cmd)
+
+        return wrapper
+    return decorator
+
 
 def remove_file(filepath):
     os.remove(os.path.join(PROJECT_DIRECTORY, filepath))
 
 
+@command_exists("git")
 @subprocess_error("Could not initialize git repository")
 def init_git():
     subprocess.run(["git", "init", "."])
@@ -43,35 +56,49 @@ def init_git():
     )
 
 
+def run_pip(pip, pip_compile):
+    subprocess.run(
+        pip + ["install", "pip-tools", "pre-commit", "wheel", "setuptools-scm"]
+    )
+
+    for req in ("dev", "docs", "tests"):
+        subprocess.run(pip_compile + [f"requirements/{req}.in"])
+    subprocess.run(pip + ["install", "-e", ".[all]"])
+
+@command_exists('conda')
+def install_conda():
+    pip = ["conda", "run", "-n", "{{ cookiecutter.project_slug }}", "pip"]
+    pip_compile = [
+        "conda",
+        "run",
+        "-n",
+        "{{ cookiecutter.project_slug }}",
+        "pip-compile",
+    ]
+    run_pip(pip, pip_compile)
+
+
 @subprocess_error("Could not install the module {{ cookiecutter.project_slug }}")
 def install():
     direnv_layout = "{{ cookiecutter.direnv_layout }}"
-
-    def run_pip(pip, pip_compile):
-        subprocess.run([pip] + ["install", "pip-tools", "pre-commit", "wheel", "setuptools-scm"])
-
-        for req in ("dev", "docs", "tests"):
-            subprocess.run([pip_compile] + [f"requirements/{req}.in"])
-        subprocess.run([pip] + ["install", "-e", ".[all]"])
-
     if direnv_layout == "virtualenv":
         prefix = ".direnv/python{{ cookiecutter.pyver }}/bin/"
-        pip = "/".join([prefix, "pip"])
-        pip_compile = "/".join([prefix, "pip-compile"])
+        pip = ["/".join([prefix, "pip"])]
+        pip_compile = ["/".join([prefix, "pip-compile"])]
         run_pip(pip, pip_compile)
-    elif direnv_layout == "conda":
-        pip = ["conda", "run", "-n", "{{ cookiecutter.project_slug }}", "pip"]
-        pip_compile = ["conda", "run", "-n", "{{ cookiecutter.project_slug }}", "pip-compile"]
-        run_pip(pip, pip_compile)
+    elif direnv_layout == "anaconda":
+        install_conda()
     else:
         raise RuntimeError(f"Environment {direnv_layout} is not recognized")
 
 
+@command_exists("pre-commit")
 @subprocess_error("Could not initialize pre-commit")
 def pre_commit():
     subprocess.run(["pre-commit", "install"])
 
 
+@command_exists("direnv")
 @subprocess_error("Could not initialize direnv")
 def dir_env():
     subprocess.run(["direnv", "allow", "."])
@@ -85,24 +112,35 @@ def create_venv():
     layout = "{{ cookiecutter.direnv_layout }}"
     cmd = None
     if layout == "anaconda":
-        cmd = [
-            "conda",
-            "create",
-            "-y",
-            "-c conda-forge",
-            "-n",
-            "{{ cookiecutter.project_slug }}",
-            "python={{ cookiecutter.pyver }}",
-        ]
+        cmd = create_conda()
     elif layout == "virtualenv":
-        cmd = [
-            "python{{ cookiecutter.pyver }}","-m", "venv", ".direnv/python{{ cookiecutter.pyver }}"
-        ]
+        cmd = create_virtualenv()
     else:
-        pass
+        warnings.warn(f"Layout {layout} not recognized")
 
     if cmd:
         subprocess.run(cmd)
+
+@command_exists("conda")
+def create_conda():
+    return  [
+        "conda",
+        "create",
+        "-y",
+        "-c conda-forge",
+        "-n",
+        "{{ cookiecutter.project_slug }}",
+        "python={{ cookiecutter.pyver }}",
+    ]
+
+@command_exists("python{{ cookiecutter.pyver }}")
+def create_virtualenv():
+    return [
+        "python{{ cookiecutter.pyver }}",
+        "-m",
+        "venv",
+        ".direnv/python{{ cookiecutter.pyver }}",
+    ]
 
 
 if __name__ == "__main__":

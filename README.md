@@ -7,7 +7,7 @@ python development
  - Automatic versioning with setuptools_scm (requires git annotated tags before it'll work)
  - setup.cfg with flake8 opinions, pytest/pytest-cov configuration (including fixed PYTHONHASHSEED), isort compatibility with black, pytype configuration
  - `dev`, `docs`, `test` options for installation
- - Choice of virtual environment handler  between `conda` and `pipenv`
+ - Choice of virtual environment handler  between `conda` or `virtualenv`
  - Generation of `.envrc` file to use with direnv (auto activate virtual
    environment)
  - Generation of a basic Dockerfile
