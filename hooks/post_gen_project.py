@@ -2,6 +2,7 @@
 import os
 import subprocess
 import warnings
+import ast
 
 PROJECT_DIRECTORY = os.path.realpath(os.path.curdir)
 
@@ -44,20 +45,31 @@ def init_git():
 
 @subprocess_error("Could not install the module {{ cookiecutter.project_slug }}")
 def install():
-    if "{{ cookiecutter.direnv_layout }}" == "pipenv":
-        subprocess.run(["pipenv", "install", "-e", ".[dev,test,docs]"])
-    else:
-        cmd = ["pip", "install", "-e", ".[dev,test,docs]"]
-        if "{{ cookiecutter.direnv_layout }} == conda":
-            cmd = ["conda", "run", "-n", "{{ cookiecutter.project_slug }}"] + cmd
+    direnv_layout = "{{ cookiecutter.direnv_layout }}"
 
-        subprocess.run(cmd)
+    def run_pip(pip, pip_compile):
+        subprocess.run([pip] + ["install", "pip-tools", "pre-commit", "wheel", "setuptools-scm"])
+
+        for req in ("dev", "docs", "tests"):
+            subprocess.run([pip_compile] + [f"requirements/{req}.in"])
+        subprocess.run([pip] + ["install", "-e", ".[all]"])
+
+    if direnv_layout == "virtualenv":
+        prefix = ".direnv/python{{ cookiecutter.pyver }}/bin/"
+        pip = "/".join([prefix, "pip"])
+        pip_compile = "/".join([prefix, "pip-compile"])
+        run_pip(pip, pip_compile)
+    elif direnv_layout == "conda":
+        pip = ["conda", "run", "-n", "{{ cookiecutter.project_slug }}", "pip"]
+        pip_compile = ["conda", "run", "-n", "{{ cookiecutter.project_slug }}", "pip-compile"]
+        run_pip(pip, pip_compile)
+    else:
+        raise RuntimeError(f"Environment {direnv_layout} is not recognized")
 
 
 @subprocess_error("Could not initialize pre-commit")
 def pre_commit():
     subprocess.run(["pre-commit", "install"])
-    subprocess.run(["pre-commit", "install", "--hook-type=pre-push"])
 
 
 @subprocess_error("Could not initialize direnv")
@@ -82,8 +94,10 @@ def create_venv():
             "{{ cookiecutter.project_slug }}",
             "python={{ cookiecutter.pyver }}",
         ]
-    elif layout == "pipenv":
-        cmd = ["pipenv", "--python", "{{ cookiecutter.pyver }}"]
+    elif layout == "virtualenv":
+        cmd = [
+            "python{{ cookiecutter.pyver }}","-m", "venv", ".direnv/python{{ cookiecutter.pyver }}"
+        ]
     else:
         pass
 

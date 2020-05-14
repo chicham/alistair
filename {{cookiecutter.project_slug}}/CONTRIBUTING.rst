@@ -85,7 +85,7 @@ Ready to contribute? Here's how to set up `{{ cookiecutter.project_slug }}` for 
 6. Submit a pull/merge request through.
 
 Pull/Merge Request Guidelines
------------------------
+-----------------------------
 
 Before you submit a pull request, check that it meets these guidelines:
 

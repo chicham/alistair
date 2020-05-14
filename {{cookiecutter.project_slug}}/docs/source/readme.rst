@@ -1,3 +1,2 @@
-README
-======
 .. include:: ../../README.rst
+

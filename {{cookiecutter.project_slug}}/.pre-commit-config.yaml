@@ -84,6 +84,7 @@ repos:
             entry: pytest
             language: python
             pass_filenames: false
+            stages: [push]
           - id: vulture
             name: vulture
             entry: vulture
@@ -96,6 +97,7 @@ repos:
             language: system
             types: [python]
             args: [-c=.bandit.yaml]
+            stages: [push]
           - id: pytype
             name: pytype
             entry: pytype
