@@ -15,6 +15,7 @@ Welcome to {{ cookiecutter.project_name }}'s documentation!
    usages
    history
    contributing
+   notebooks
 
 
 
