@@ -20,7 +20,7 @@ Prior to installing alistair, the cookiecutter package must be installed in your
 
     $ conda install cookiecutter
 
-With cookiecutter installed, the cookiecutter-conda-python template can be installed with::
+With cookiecutter installed, the alistair template can be installed with::
 
     $ cookiecutter https://github.com/chicham/alistair.git
 
