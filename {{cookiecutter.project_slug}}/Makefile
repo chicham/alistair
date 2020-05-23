@@ -42,44 +42,37 @@ clean-pyc: ## remove Python file artifacts
 	find . -name '__pycache__' -exec rm -fr {} +
 
 clean-test: ## remove test and coverage artifacts
-	rm -fr .tox/
 	rm -f .coverage
 	rm -fr htmlcov/
 	rm -fr .pytest_cache
 
-lint: ## check style with flake8
-	flake8 {{ cookiecutter.project_slug }} tests
-
-test: ## run tests quickly with the default Python
+test: ## run tests quickly
 	pytest
 
-test-all: ## run tests on every Python version with tox
-	tox
-
 coverage: ## check code coverage quickly with the default Python
-	coverage run --source {{ cookiecutter.project_slug }} -m pytest
+	coverage run --source web_extraction -m pytest
 	coverage report -m
 	coverage html
 	$(BROWSER) htmlcov/index.html
 
 docs: ## generate Sphinx HTML documentation, including API docs
-	rm -f docs/{{ cookiecutter.project_slug }}.rst
-	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ {{ cookiecutter.project_slug }}
+	cd docs
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
-	$(BROWSER) docs/_build/html/index.html
-
-servedocs: docs ## compile the docs watching for changes
-	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
-
-release: dist ## package and upload a release
-	twine upload dist/*
-
-dist: clean ## builds source and wheel package
-	python setup.py sdist
-	python setup.py bdist_wheel
-	ls -l dist
+	$(BROWSER) docs/build/html/index.html
+	cd ..
 
 install: clean ## install the package to the active Python's site-packages
-	python setup.py install
+	pre-commit install
+	pip install -e .
+
+install-all: clean ## install the package to the active Python's site-packages
+	pre-commit install
+	pip install -e '.[all]'
+
+deps:
+	pip-compile requirements/dev.in --output-file requirements/dev.txt
+	pip-compile requirements/docs.in --output-file requirements/docs.txt
+
+lint:
+	pre-commit run --all-files
