@@ -22,7 +22,7 @@ Prior to installing alistair, the cookiecutter package must be installed in your
 
 With cookiecutter installed, the alistair template can be installed with::
 
-    $ cookiecutter https://github.com/chicham/alistair.git
+    $ cookiecutter https://git.qwant.ninja/research/images/cookiecutter-python.git
 
 
 Once cookiecutter clones the template, you will be asked a series of questions related to your project::
