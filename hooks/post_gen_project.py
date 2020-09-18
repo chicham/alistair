@@ -2,8 +2,8 @@
 import os
 import subprocess
 import warnings
-import ast
 from distutils import spawn
+from enum import Enum
 
 PROJECT_DIRECTORY = os.path.realpath(os.path.curdir)
 
@@ -20,20 +20,79 @@ def subprocess_error(msg):
 
     return decorator
 
+
 def command_exists(cmd):
     def decorator(f):
         def wrapper(*args, **kwargs):
-            if spawn.find_executable(cmd):
+            if spawn.find_executable(cmd.strip()):
                 return f(*args, **kwargs)
             else:
-                warnings.warn("Command %s is not in path", cmd)
+                warnings.warn(f"Command {cmd} not found")
 
         return wrapper
+
     return decorator
 
 
 def remove_file(filepath):
     os.remove(os.path.join(PROJECT_DIRECTORY, filepath))
+
+
+@command_exists("conda")
+def create_conda():
+    subprocess.run(
+        [
+            "conda",
+            "create",
+            "-y",
+            "-n",
+            "{{ cookiecutter.project_slug }}",
+            "python={{ cookiecutter.pyver }}",
+        ]
+    )
+
+
+@command_exists("python{{ cookiecutter.pyver}}")
+def create_venv():
+    warnings.warn(
+        f"Creating venv at {PROJECT_DIRECTORY}/.{{ cookiecutter.project_slug }}"
+    )
+    subprocess.run(
+        [
+            "python{{ cookiecutter.pyver }}",
+            "-m",
+            "venv",
+            ".{{ cookiecutter.project_slug }}",
+        ]
+    )
+
+
+@command_exists("pyenv")
+def create_pyenv():
+    warnings.warn("")
+    subprocess.run(
+        [
+            "pyenv",
+            "virtualenv",
+            "{{ cookiecutter.pyver }}",
+            "{{ cookiecutter.project_slug }}.{{ cookiecutter.pyver }}",
+        ]
+    )
+
+
+@command_exists("pip-compile")
+def update_deps():
+    subprocess.run(["pip", "install", "pip-tools"])
+    subprocess.run(
+        ["pip-compile", "requirements/reqs.in", "-o", "requirements/reqs.txt"]
+    )
+    subprocess.run(["pip-compile", "requirements/dev.in", "-o", "requirements/dev.txt"])
+    subprocess.run(
+        ["pip-compile", "requirements/tests.in", "-o", "requirements/tests.txt"]
+    )
+    subprocess.run(
+        ["pip-compile", "requirements/docs.in", "-o", "requirements/docs.txt"]
+    )
 
 
 @command_exists("git")
@@ -56,91 +115,9 @@ def init_git():
     )
 
 
-def run_pip(pip, pip_compile):
-    subprocess.run(
-        pip + ["install", "pip-tools", "pre-commit", "wheel", "setuptools-scm"]
-    )
-
-    for req in ("dev", "docs", "tests"):
-        subprocess.run(pip_compile + [f"requirements/{req}.in"])
-    subprocess.run(pip + ["install", "-e", ".[all]"])
-
-@command_exists('conda')
-def install_conda():
-    pip = ["conda", "run", "-n", "{{ cookiecutter.project_slug }}", "pip"]
-    pip_compile = [
-        "conda",
-        "run",
-        "-n",
-        "{{ cookiecutter.project_slug }}",
-        "pip-compile",
-    ]
-    run_pip(pip, pip_compile)
-
-
-@subprocess_error("Could not install the module {{ cookiecutter.project_slug }}")
-def install():
-    direnv_layout = "{{ cookiecutter.direnv_layout }}"
-    if direnv_layout == "virtualenv":
-        prefix = ".direnv/python{{ cookiecutter.pyver }}/bin/"
-        pip = ["/".join([prefix, "pip"])]
-        pip_compile = ["/".join([prefix, "pip-compile"])]
-        run_pip(pip, pip_compile)
-    elif direnv_layout == "anaconda":
-        install_conda()
-    else:
-        raise RuntimeError(f"Environment {direnv_layout} is not recognized")
-
-
-@command_exists("pre-commit")
-@subprocess_error("Could not initialize pre-commit")
-def pre_commit():
-    subprocess.run(["pre-commit", "install"])
-
-
 @command_exists("direnv")
-@subprocess_error("Could not initialize direnv")
-def dir_env():
-    subprocess.run(["direnv", "allow", "."])
-    warnings.warn(
-        "If the layouts are not configured, go to "
-        "https://github.com/direnv/direnv/wiki/Python"
-    )
-
-
-def create_venv():
-    layout = "{{ cookiecutter.direnv_layout }}"
-    cmd = None
-    if layout == "anaconda":
-        cmd = create_conda()
-    elif layout == "virtualenv":
-        cmd = create_virtualenv()
-    else:
-        warnings.warn(f"Layout {layout} not recognized")
-
-    if cmd:
-        subprocess.run(cmd)
-
-@command_exists("conda")
-def create_conda():
-    return  [
-        "conda",
-        "create",
-        "-y",
-        "-c conda-forge",
-        "-n",
-        "{{ cookiecutter.project_slug }}",
-        "python={{ cookiecutter.pyver }}",
-    ]
-
-@command_exists("python{{ cookiecutter.pyver }}")
-def create_virtualenv():
-    return [
-        "python{{ cookiecutter.pyver }}",
-        "-m",
-        "venv",
-        ".direnv/python{{ cookiecutter.pyver }}",
-    ]
+def direnv_allow():
+    subprocess.run(["direnv", "allow"])
 
 
 if __name__ == "__main__":
@@ -152,8 +129,17 @@ if __name__ == "__main__":
     if "Not open source" == "{{ cookiecutter.open_source_license }}":
         remove_file("LICENSE")
 
-    create_venv()
     init_git()
-    install()
-    dir_env()
-    pre_commit()
+
+    venv = "{{ cookiecutter.virtual_env }}"
+
+    if venv == "anaconda":
+        create_conda()
+    elif venv == "venv":
+        create_venv()
+    else:
+        pass
+    if "{{ cookiecutter.use_direnv }}" == "y":
+        direnv_allow()
+    else:
+        subprocess.run(["rm", "-f", ".envrc"])

@@ -113,3 +113,4 @@ dmypy.json
 .pytype/
 **/outputs
 .direnv
+**/.ipynb_checkpoints/

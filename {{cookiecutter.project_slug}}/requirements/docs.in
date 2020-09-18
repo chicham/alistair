@@ -1,7 +1,8 @@
-sphinx>=2.4,<2.5
-sphinxcontrib-apidoc>=0.3,<0.4
-recommonmark>=0.6,<0.7
-sphinxcontrib-katex>=0.6
+-c reqs.in
+sphinx
+sphinxcontrib-apidoc
+recommonmark
+sphinxcontrib-katex
 sphinx_rtd_theme
 nbsphinx
 jupyter_client

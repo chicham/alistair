@@ -12,6 +12,9 @@ from setuptools import setup
 
 extras_require = {}
 
+with open("./requirements/reqs.txt") as src:
+    install_require = src.read().splitlines()
+
 with open("./requirements/docs.txt") as src:
     extras_require["docs"] = src.read().splitlines()
 
@@ -30,4 +33,5 @@ setup(
         "tag_regex": r"^(?P<prefix>v)?(?P<version>[^\+]+)(?P<suffix>.*)?$",
     },
     extras_require=extras_require,
+    install_require=install_require,
 )

@@ -1,4 +1,5 @@
-pytest>=4.3.0
+-c reqs.in
+pytest
 pytest-cov
-coverage>=5.0.2
+coverage
 hypothesis

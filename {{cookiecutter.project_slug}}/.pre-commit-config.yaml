@@ -41,19 +41,6 @@ repos:
       rev: v0.13.1
       hooks:
           - id: detect-secrets
-    - repo: https://github.com/jazzband/pip-tools
-      rev: 5.0.0
-      hooks:
-          - id: pip-compile
-            name: pip-compile-dev
-            files: ^requirements/(dev)\.(in|txt)$
-            args: [requirements/dev.in]
-            stages: [push]
-          - id: pip-compile
-            name: pip-compile-docs
-            files: ^requirements/(docs)\.(in|txt)$
-            args: [requirements/docs.in]
-            stages: [push]
     - repo: local
       hooks:
           - id: black
@@ -79,25 +66,6 @@ repos:
             language: python
             types: [file, yaml]
             args: [-d=relaxed]
-          - id: pytest
-            name: pytest
-            entry: pytest
-            language: python
-            pass_filenames: false
-            stages: [push]
-          - id: vulture
-            name: vulture
-            entry: vulture
-            language: system
-            types: [python]
-            args: [--sort-by-size, --min-confidence=90]
-          - id: bandit
-            name: bandit
-            entry: bandit
-            language: system
-            types: [python]
-            args: [-c=.bandit.yaml]
-            stages: [push]
           - id: pytype
             name: pytype
             entry: pytype

@@ -24,7 +24,6 @@ With cookiecutter installed, the alistair template can be installed with::
 
     $ cookiecutter https://github.com/chicham/alistair.git
 
-Also [direnv](https://direnv.net/) must be installed and configured (https://github.com/direnv/direnv/wiki/Python) to allow auto activation of virtual environment.
 
 Once cookiecutter clones the template, you will be asked a series of questions related to your project::
 
@@ -32,3 +31,9 @@ Once cookiecutter clones the template, you will be asked a series of questions r
 
 After answering the questions asked during installation, a python module will be
 created in your current working directory.
+
+
+## Recommendation
+
+- Use [conda](https://docs.conda.io/en/latest/) to manage your virtual environment ( create a virtualenv !!)
+- Use [direnv](https://direnv.net/) to automatically activate your virtualenv
