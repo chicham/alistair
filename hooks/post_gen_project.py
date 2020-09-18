@@ -80,21 +80,6 @@ def create_pyenv():
     )
 
 
-@command_exists("pip-compile")
-def update_deps():
-    subprocess.run(["pip", "install", "pip-tools"])
-    subprocess.run(
-        ["pip-compile", "requirements/reqs.in", "-o", "requirements/reqs.txt"]
-    )
-    subprocess.run(["pip-compile", "requirements/dev.in", "-o", "requirements/dev.txt"])
-    subprocess.run(
-        ["pip-compile", "requirements/tests.in", "-o", "requirements/tests.txt"]
-    )
-    subprocess.run(
-        ["pip-compile", "requirements/docs.in", "-o", "requirements/docs.txt"]
-    )
-
-
 @command_exists("git")
 @subprocess_error("Could not initialize git repository")
 def init_git():
@@ -114,10 +99,26 @@ def init_git():
         ]
     )
 
+    subprocess.run(
+        [
+            "git",
+            "remote",
+            "set-url",
+            "--push",
+            "origin",
+            "{{ cookiecutter.project_remote }}",
+        ]
+    )
+
 
 @command_exists("direnv")
 def direnv_allow():
     subprocess.run(["direnv", "allow"])
+
+
+@command_exists("pre-commit")
+def pre_commit_install():
+    subprocess.run("pre-commit", "install", "--install-hooks", "--overwrite")
 
 
 if __name__ == "__main__":

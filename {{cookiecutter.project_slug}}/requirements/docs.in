@@ -1,4 +1,4 @@
--c reqs.in
+-c reqs.txt
 sphinx
 sphinxcontrib-apidoc
 recommonmark

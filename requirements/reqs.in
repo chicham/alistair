@@ -1,2 +1,3 @@
 cookiecutter
 pip-tools
+pre-commit
