@@ -1,9 +1,9 @@
 #!/usr/bin/env python
+
 import os
 import subprocess
 import warnings
 from distutils import spawn
-from enum import Enum
 
 PROJECT_DIRECTORY = os.path.realpath(os.path.curdir)
 
@@ -48,7 +48,8 @@ def create_conda():
             "-n",
             "{{ cookiecutter.project_slug }}",
             "python={{ cookiecutter.pyver }}",
-        ]
+        ],
+        check=True,
     )
 
 
@@ -63,7 +64,8 @@ def create_venv():
             "-m",
             "venv",
             ".{{ cookiecutter.project_slug }}",
-        ]
+        ],
+        check=True,
     )
 
 
@@ -76,17 +78,19 @@ def create_pyenv():
             "virtualenv",
             "{{ cookiecutter.pyver }}",
             "{{ cookiecutter.project_slug }}.{{ cookiecutter.pyver }}",
-        ]
+        ],
+        check=True,
     )
 
 
 @command_exists("git")
 @subprocess_error("Could not initialize git repository")
 def init_git():
-    subprocess.run(["git", "init", "."])
-    subprocess.run(["git", "add", "."])
+    subprocess.run(["git", "init", "."], check=True)
+    subprocess.run(["git", "add", "."], check=True)
     subprocess.run(
-        ["git", "remote", "add", "origin", "{{ cookiecutter.project_remote }}"]
+        ["git", "remote", "add", "origin", "{{ cookiecutter.project_remote }}"],
+        check=True,
     )
     subprocess.run(
         [
@@ -96,7 +100,8 @@ def init_git():
             "--push",
             "origin",
             "{{ cookiecutter.project_remote }}",
-        ]
+        ],
+        check=True,
     )
 
     subprocess.run(
@@ -107,18 +112,21 @@ def init_git():
             "--push",
             "origin",
             "{{ cookiecutter.project_remote }}",
-        ]
+        ],
+        check=True,
     )
 
 
 @command_exists("direnv")
 def direnv_allow():
-    subprocess.run(["direnv", "allow"])
+    subprocess.run(["direnv", "allow"], check=True)
 
 
 @command_exists("pre-commit")
 def pre_commit_install():
-    subprocess.run("pre-commit", "install", "--install-hooks", "--overwrite")
+    subprocess.run(
+        "pre-commit", "install", "--install-hooks", "--overwrite", check=True
+    )
 
 
 if __name__ == "__main__":
@@ -143,4 +151,4 @@ if __name__ == "__main__":
     if "{{ cookiecutter.use_direnv }}" == "y":
         direnv_allow()
     else:
-        subprocess.run(["rm", "-f", ".envrc"])
+        subprocess.run(["rm", "-f", ".envrc"], check=True)
