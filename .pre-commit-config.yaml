@@ -1,0 +1,47 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+#
+repos:
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v2.5.0
+      hooks:
+          - id: check-added-large-files
+          - id: check-merge-conflict
+          - id: check-executables-have-shebangs
+          - id: check-json
+          - id: check-xml
+          - id: pretty-format-json
+          - id: detect-private-key
+          - id: mixed-line-ending
+          - id: end-of-file-fixer
+          - id: trailing-whitespace
+    - repo: https://github.com/asottile/yesqa
+      rev: v1.1.0
+      hooks:
+          - id: yesqa
+    - repo: https://github.com/asottile/setup-cfg-fmt
+      rev: v1.9.0
+      hooks:
+          - id: setup-cfg-fmt
+    - repo: https://github.com/asottile/pyupgrade
+      rev: v1.26.2
+      hooks:
+          - id: pyupgrade
+            args: [--py3-plus]
+    - repo: https://github.com/asottile/add-trailing-comma
+      rev: v2.0.1
+      hooks:
+          - id: add-trailing-comma
+    - repo: https://github.com/Yelp/detect-secrets
+      rev: v0.13.1
+      hooks:
+          - id: detect-secrets
+    - repo: local
+      hooks:
+          - id: yamllint
+            name: yamllint
+            description: This hook runs yamllint.
+            entry: yamllint
+            language: python
+            types: [file, yaml]
+            args: [-d=relaxed]
