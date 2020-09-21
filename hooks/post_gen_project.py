@@ -56,7 +56,7 @@ def create_conda():
 @command_exists("python{{ cookiecutter.pyver}}")
 def create_venv():
     warnings.warn(
-        f"Creating venv at {PROJECT_DIRECTORY}/.{{ cookiecutter.project_slug }}"
+        f"Creating venv at {PROJECT_DIRECTORY}/.{{ cookiecutter.project_slug }}",
     )
     subprocess.run(
         [
@@ -125,7 +125,7 @@ def direnv_allow():
 @command_exists("pre-commit")
 def pre_commit_install():
     subprocess.run(
-        "pre-commit", "install", "--install-hooks", "--overwrite", check=True
+        "pre-commit", "install", "--install-hooks", "--overwrite", check=True,
     )
 
 
