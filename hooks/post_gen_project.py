@@ -125,7 +125,11 @@ def direnv_allow():
 @command_exists("pre-commit")
 def pre_commit_install():
     subprocess.run(
-        "pre-commit", "install", "--install-hooks", "--overwrite", check=True,
+        "pre-commit",
+        "install",
+        "--install-hooks",
+        "--overwrite",
+        check=True,
     )
 
 
@@ -133,7 +137,7 @@ if __name__ == "__main__":
 
     if "{{ cookiecutter.create_author_file }}" != "y":
         remove_file("AUTHORS.rst")
-        remove_file("docs/authors.rst")
+        # remove_file("docs/authors.rst")
 
     if "Not open source" == "{{ cookiecutter.open_source_license }}":
         remove_file("LICENSE")
