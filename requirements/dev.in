@@ -1,10 +1,4 @@
 -c reqs.txt
 flake8
 yamllint
-flake8-bugbear
-flake8-comprehensions
-flake8-bandit
-flake8-isort
-flake8-black
-neovim
-jedi
+wemake-python-styleguide

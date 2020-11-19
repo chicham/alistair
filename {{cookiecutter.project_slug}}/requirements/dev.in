@@ -1,13 +1,4 @@
 -c reqs.txt
-bandit
 flake8
 yamllint
-pytype
-flake8-bugbear
-flake8-comprehensions
-flake8-bandit
-flake8-isort
-flake8-black
-pip-tools
-invoke
-pre-commit
+wemake-python-styleguide

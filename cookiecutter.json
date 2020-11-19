@@ -4,6 +4,7 @@
     "email": "{{cookiecutter.username}}@qwant.com",
     "remote_host": "git.qwant.ninja",
     "pyver": [
+        "3.9",
         "3.8",
         "3.7",
         "3.6"

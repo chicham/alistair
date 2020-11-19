@@ -10,7 +10,6 @@ repos:
           - id: check-executables-have-shebangs
           - id: check-json
           - id: check-xml
-          - id: pretty-format-json
           - id: detect-private-key
           - id: mixed-line-ending
           - id: end-of-file-fixer
@@ -20,10 +19,6 @@ repos:
       rev: v1.1.0
       hooks:
           - id: yesqa
-    - repo: https://github.com/asottile/setup-cfg-fmt
-      rev: v1.9.0
-      hooks:
-          - id: setup-cfg-fmt
     - repo: https://github.com/asottile/pyupgrade
       rev: v1.26.2
       hooks:
