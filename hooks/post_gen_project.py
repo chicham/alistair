@@ -6,6 +6,7 @@ import warnings
 from distutils import spawn
 
 PROJECT_DIRECTORY = os.path.realpath(os.path.curdir)
+SETUP_DEPENDENCES = ["pip-tools", "invoke", "pre-commit"]
 
 
 def subprocess_error(msg):
@@ -40,17 +41,16 @@ def remove_file(filepath):
 
 @command_exists("conda")
 def create_conda():
-    subprocess.run(
-        [
-            "conda",
-            "create",
-            "-y",
-            "-n",
-            "{{ cookiecutter.project_slug }}",
-            "python={{ cookiecutter.pyver }}",
-        ],
-        check=True,
-    )
+    args = [
+        "conda",
+        "create",
+        "-y",
+        "-n",
+        "{{ cookiecutter.project_slug }}",
+        "python={{ cookiecutter.pyver }}",
+    ]
+    args.extend(SETUP_DEPENDENCES)
+    subprocess.run(args)
 
 
 @command_exists("python{{ cookiecutter.pyver}}")
@@ -67,18 +67,15 @@ def create_venv():
         ],
         check=True,
     )
-
-
-@command_exists("pyenv")
-def create_pyenv():
-    warnings.warn("")
+    args = [
+        ".{{ cookiecutter.project_slug }}/bin/python{{ cookiecutter.pyver }}",
+        "-m",
+        "pip",
+        "install",
+    ]
+    args.extend(SETUP_DEPENDENCES)
     subprocess.run(
-        [
-            "pyenv",
-            "virtualenv",
-            "{{ cookiecutter.pyver }}",
-            "{{ cookiecutter.project_slug }}.{{ cookiecutter.pyver }}",
-        ],
+        args,
         check=True,
     )
 
