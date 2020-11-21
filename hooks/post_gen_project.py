@@ -6,7 +6,7 @@ import warnings
 from distutils import spawn
 
 PROJECT_DIRECTORY = os.path.realpath(os.path.curdir)
-SETUP_DEPENDENCES = ["pip-tools", "invoke", "pre-commit"]
+SETUP_DEPENDENCIES = ["pip-tools", "invoke", "pre-commit"]
 
 
 def subprocess_error(msg):
@@ -39,6 +39,15 @@ def remove_file(filepath):
     os.remove(os.path.join(PROJECT_DIRECTORY, filepath))
 
 
+def update_dev():
+    return [
+        "piptools",
+        "compile",
+        "--output-file=requirements/dev.txt",
+        "requirements/dev.in",
+    ]
+
+
 @command_exists("conda")
 def create_conda():
     args = [
@@ -49,8 +58,27 @@ def create_conda():
         "{{ cookiecutter.project_slug }}",
         "python={{ cookiecutter.pyver }}",
     ]
-    args.extend(SETUP_DEPENDENCES)
-    subprocess.run(args)
+    args.extend(SETUP_DEPENDENCIES)
+    subprocess.run(args, check=True)
+    prefix = [
+        "conda",
+        "run",
+        "-n",
+        "{{ cookiecutter.project_slug }}",
+        "python",
+        "-m",
+    ]
+    subprocess.run(prefix + update_dev(), check=True)
+    subprocess.run(
+        prefix
+        + [
+            "pip",
+            "install",
+            "-r",
+            "requirements/dev.txt",
+        ],
+        check=True,
+    )
 
 
 @command_exists("python{{ cookiecutter.pyver}}")
@@ -67,15 +95,16 @@ def create_venv():
         ],
         check=True,
     )
-    args = [
+    prefix = [
         ".{{ cookiecutter.project_slug }}/bin/python{{ cookiecutter.pyver }}",
         "-m",
-        "pip",
-        "install",
     ]
-    args.extend(SETUP_DEPENDENCES)
     subprocess.run(
-        args,
+        prefix + ["pip", "install"] + SETUP_DEPENDENCIES,
+        check=True,
+    )
+    subprocess.run(
+        prefix + update_dev(),
         check=True,
     )
 
@@ -119,13 +148,17 @@ def direnv_allow():
     subprocess.run(["direnv", "allow"], check=True)
 
 
-@command_exists("pre-commit")
-def pre_commit_install():
-    subprocess.run(
-        "pre-commit",
+def pre_commit_install(prefix=None):
+    if not prefix:
+        prefix = ["python", "-m"]
+    args = [
+        "pre_commit",
         "install",
         "--install-hooks",
         "--overwrite",
+    ]
+    subprocess.run(
+        prefix + args,
         check=True,
     )
 
@@ -145,8 +178,23 @@ if __name__ == "__main__":
 
     if venv == "anaconda":
         create_conda()
+        pre_commit_install(
+            [
+                "conda",
+                "run",
+                "-n",
+                "{{ cookiecutter.project_slug }}",
+                "python",
+                "-m",
+            ],
+        )
     elif venv == "venv":
         create_venv()
+        pre_commit_install(
+            prefix=[
+                ".{{ cookiecutter.project_slug }}/bin/python{{ cookiecutter.pyver }}",
+            ],
+        )
     else:
         pass
     if "{{ cookiecutter.use_direnv }}" == "y":

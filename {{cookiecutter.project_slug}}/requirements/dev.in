@@ -1,4 +1,8 @@
 -c reqs.txt
 flake8
 yamllint
+black
+isort
+neovim
+jedi
 wemake-python-styleguide
