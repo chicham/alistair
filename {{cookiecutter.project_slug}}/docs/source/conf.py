@@ -10,16 +10,11 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
 import pkg_resources
-
 
 # -- Project information -----------------------------------------------------
 
 project = "{{ cookiecutter.project_name }}"
-copyright = "{% now 'local', '%Y' %}, {{ cookiecutter.project_name }} Contributors"
 author = "{{ cookiecutter.project_name }} Contributors"
 
 # The full version, including alpha/beta/rc tags
