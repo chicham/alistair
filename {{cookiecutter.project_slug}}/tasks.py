@@ -12,7 +12,7 @@ def update_requirement(ctx, in_file=None):
 
 @task
 def update(ctx):
-    update_requirement(ctx, "./requirements/reqs.in")
+    ctx.run("pip-compile --upgrade --output-file=./requirements/reqs.txt")
     update_requirement(ctx, "./requirements/dev.in")
     update_requirement(ctx, "./requirements/docs.in")
     update_requirement(ctx, "./requirements/tests.in")
