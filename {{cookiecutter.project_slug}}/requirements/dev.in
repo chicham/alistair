@@ -6,3 +6,4 @@ isort
 neovim
 jedi
 wemake-python-styleguide
+pytype

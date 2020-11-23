@@ -1,12 +1,12 @@
 {
     "full_name": "Qwant Research",
     "username": "{{'.'.join([cookiecutter.full_name.split(' ')[0][0].lower(), cookiecutter.full_name.split(' ')[1].lower()])}}",
-    "email": "{{cookiecutter.username}}@qwant.com",
-    "remote_host": "git.qwant.ninja",
+    "email": "{{cookiecutter.username}}@gmail.com",
+    "remote_host": "github.com",
     "pyver": [
+        "3.7",
         "3.9",
         "3.8",
-        "3.7",
         "3.6"
     ],
     "virtual_env": [

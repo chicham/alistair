@@ -1,13 +1,12 @@
-from pathlib import Path
-
 from invoke import task
+from pathlib import Path
 
 
 @task
 def update_requirement(ctx, in_file=None):
-    in_file = Path(in_file)
-    output_file = Path(f"{in_file.parent / in_file.stem}.txt")
-    ctx.run(f"pip-compile --upgrade {str(in_file)} --output-file={str(output_file)}")
+    in_path = Path(in_file)
+    output_file = f"{in_path.parent / in_path.stem}.txt"
+    ctx.run(f"pip-compile --upgrade {in_file} --output-file={output_file}")
 
 
 @task
@@ -32,12 +31,12 @@ def install(ctx, editable=False, extra=None):
     """
     cmd = ["pip", "install"]
     if editable:
-        cmd += "-e"
+        cmd.append("-e")
 
     if extra:
-        cmd += f".[{extra}]"
+        cmd.append(f".[{extra}]")
     else:
-        cmd += "."
+        cmd.append(".")
 
     ctx.run(" ".join(cmd))
 
@@ -54,12 +53,7 @@ def clean(ctx):
     ctx.run("find . -name '*.egg' -exec rm -f {} +")
     ctx.run("find . -name '*.pyc' -exec rm -f {} +")
     ctx.run("find . -name '*.pyo' -exec rm -f {} +")
-    ctx.run("find . -name '*~' -exec rm -f {} +")
     ctx.run("find . -name '__pycache__' -exec rm -fr {} +")
-    ctx.run("rm -fr .tox/")
-    ctx.run("rm -f .coverage")
-    ctx.run("rm -fr htmlcov/")
-    ctx.run("rm -fr .pytest_cache")
 
 
 @task
