@@ -1,9 +1,11 @@
 from invoke import task
+from pathlib import Path
 
 
 @task
 def update_requirement(ctx, in_file=None):
-    output_file = f"{in_file.parent / in_file.stem}.txt"
+    in_path = Path(in_file)
+    output_file = f"{in_path.parent / in_path.stem}.txt"
     ctx.run(f"pip-compile --upgrade {in_file} --output-file={output_file}")
 
 
