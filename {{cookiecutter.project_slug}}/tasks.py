@@ -18,10 +18,10 @@ def update(ctx):
 
 
 @task
-def doc(ctx):
+def doc(ctx, target="html"):
     ctx.run("rm -f docs/{{ cookiecutter.project_slug }}.rst")
     ctx.run("rm -f docs/modules.rst")
-    ctx.run("sphinx-apidoc -o docs/{{ cookiecutter.project_slug }}")
+    ctx.run(f"cd docs/ && make {target}")
 
 
 @task
