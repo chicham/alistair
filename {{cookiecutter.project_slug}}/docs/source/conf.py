@@ -36,9 +36,15 @@ extensions = [
     "sphinx.ext.todo",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
+    "sphinx.ext.intersphinx",
+    "sphinx_autodoc_typehints",
     "sphinxcontrib.katex",
     "nbsphinx",
 ]
+
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3/", None),
+}
 
 # List of arguments to be passed to the kernel that executes the notebooks:
 nbsphinx_execute_arguments = [
@@ -50,6 +56,10 @@ nbsphinx_execute_arguments = [
 master_doc = "index"
 autosummary_generate = True
 numpydoc_show_class_members = False
+
+
+autoclass_content = "both"  # Add __init__ doc (ie. params) to class summaries
+autodoc_inherit_docstrings = True  # If no class summary, inherit base class summary
 
 # autosectionlabel throws warnings if section names are duplicated.
 # The following tells autosectionlabel to not throw a warning for
