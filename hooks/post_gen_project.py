@@ -178,7 +178,7 @@ if __name__ == "__main__":
         ],
     )
 
-    if "{{ cookiecutter.use_direnv }}" == "y":
+    if "{{ cookiecutter.create_envrc }}" == "y":
         direnv_allow()
     else:
         remove_file(".envrc")
