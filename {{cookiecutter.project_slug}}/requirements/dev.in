@@ -1,4 +1,4 @@
--c reqs.txt
+-c ../requirements.txt
 flake8
 wemake-python-styleguide
 yamllint

@@ -3,7 +3,6 @@ from pathlib import Path
 from invoke import task
 
 
-@task
 def update_requirement(ctx, in_path: Path = None, out_path: Path = None, upgrade=True):
     if out_path is None:
         if in_path is None:
@@ -13,7 +12,7 @@ def update_requirement(ctx, in_path: Path = None, out_path: Path = None, upgrade
     if upgrade:
         args.append("--upgrade")
     if out_path:
-        args.append("--output-file={out_path}")
+        args.append(f"--output-file={out_path}")
 
     if in_path:
         args.append(f"{in_path}")
@@ -23,9 +22,9 @@ def update_requirement(ctx, in_path: Path = None, out_path: Path = None, upgrade
 
 @task
 def deps(ctx):
-    current_path = Path(__file__).absolute()
+    current_path = Path(__file__).absolute().parent
     requirements_path = current_path / "requirements"
-    update_requirement(ctx, out_path=requirements_path / "reqs.txt")
+    update_requirement(ctx, out_path="requirements.txt")
     update_requirement(ctx, in_path=requirements_path / "dev.in")
     update_requirement(ctx, in_path=requirements_path / "docs.in")
     update_requirement(ctx, in_path=requirements_path / "tests.in")

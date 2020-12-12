@@ -7,4 +7,5 @@ dependencies:
   - python={{ cookiecutter.pyver }}
   - pip
   - pip:
-    - -e '.[all]'
+    - -r requirements.txt
+    - -r requirements/dev.txt

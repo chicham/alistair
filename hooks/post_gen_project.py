@@ -49,7 +49,7 @@ def update_requirements(in_reqs=None):
         "compile",
     ]
     if in_reqs is None:
-        args.append("--output-file=requirements/reqs.txt")
+        args.append("--output-file=requirements.txt")
     else:
         out_txt = f"{in_reqs}.txt"
         args.append(f"--output-file=requirements/{out_txt}")
