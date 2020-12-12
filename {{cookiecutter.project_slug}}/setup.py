@@ -4,14 +4,27 @@ from setuptools import setup
 
 extras_require = {}
 
-with open("./requirements/docs.txt") as src_docs:
-    extras_require["docs"] = src_docs.read().splitlines()
 
-with open("./requirements/tests.txt") as src_tests:
-    extras_require["tests"] = src_tests.read().splitlines()
+def read_requirements(extra):
+    with open(f"./requirements/{extra}.txt") as src:
+        return [line for line in src.read().splitlines() if not line.startswith("#")]
 
-with open("./requirements/dev.txt") as src_dev:
-    extras_require["dev"] = src_dev.read().splitlines()
+
+try:
+    extras_require["docs"] = read_requirements("docs")
+except FileNotFoundError:
+    pass
+
+
+try:
+    extras_require["tests"] = read_requirements("tests")
+except FileNotFoundError:
+    pass
+
+try:
+    extras_require["dev"] = read_requirements("dev")
+except FileNotFoundError:
+    pass
 
 extras_require["all"] = {
     requirement

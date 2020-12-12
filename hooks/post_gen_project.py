@@ -182,3 +182,4 @@ if __name__ == "__main__":
         direnv_allow()
     else:
         remove_file(".envrc")
+    run(prefix + ["pip", "install", "-e", ".[dev]"])

@@ -7,3 +7,4 @@ isort
 neovim
 jedi
 pytype
+repo2docker
