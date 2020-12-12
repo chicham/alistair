@@ -1,4 +1,4 @@
--c reqs.txt
+-c ../requirements.txt
 pytest
 pytest-cov
 coverage

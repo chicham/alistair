@@ -35,22 +35,32 @@ def command_exists(cmd):
     return decorator
 
 
+def run(cmd):
+    return subprocess.run(cmd, check=True)
+
+
 def remove_file(filepath):
     os.remove(os.path.join(PROJECT_DIRECTORY, filepath))
 
 
-def update_dev():
-    return [
+def update_requirements(in_reqs=None):
+    args = [
         "piptools",
         "compile",
-        "--output-file=requirements/dev.txt",
-        "requirements/dev.in",
     ]
+    if in_reqs is None:
+        args.append("--output-file=requirements.txt")
+    else:
+        out_txt = f"{in_reqs}.txt"
+        args.append(f"--output-file=requirements/{out_txt}")
+        args.append(f"requirements/{in_reqs}.in")
+
+    return args
 
 
 @command_exists("conda")
 def create_conda():
-    args = [
+    create_cmd = [
         "conda",
         "create",
         "-y",
@@ -58,8 +68,7 @@ def create_conda():
         "{{ cookiecutter.project_slug }}",
         "python={{ cookiecutter.pyver }}",
     ]
-    args.extend(SETUP_DEPENDENCIES)
-    subprocess.run(args, check=True)
+    run(create_cmd)
     prefix = [
         "conda",
         "run",
@@ -68,17 +77,7 @@ def create_conda():
         "python",
         "-m",
     ]
-    subprocess.run(prefix + update_dev(), check=True)
-    subprocess.run(
-        prefix
-        + [
-            "pip",
-            "install",
-            "-r",
-            "requirements/dev.txt",
-        ],
-        check=True,
-    )
+    return prefix
 
 
 @command_exists("python{{ cookiecutter.pyver}}")
@@ -86,39 +85,30 @@ def create_venv():
     warnings.warn(
         f"Creating venv at {PROJECT_DIRECTORY}/.{{ cookiecutter.project_slug }}",
     )
-    subprocess.run(
+    run(
         [
             "python{{ cookiecutter.pyver }}",
             "-m",
             "venv",
             ".{{ cookiecutter.project_slug }}",
         ],
-        check=True,
     )
     prefix = [
         ".{{ cookiecutter.project_slug }}/bin/python{{ cookiecutter.pyver }}",
         "-m",
     ]
-    subprocess.run(
-        prefix + ["pip", "install"] + SETUP_DEPENDENCIES,
-        check=True,
-    )
-    subprocess.run(
-        prefix + update_dev(),
-        check=True,
-    )
+    return prefix
 
 
 @command_exists("git")
 @subprocess_error("Could not initialize git repository")
 def init_git():
-    subprocess.run(["git", "init", "."], check=True)
-    subprocess.run(["git", "add", "."], check=True)
-    subprocess.run(
+    run(["git", "init", "."])
+    run(["git", "add", "."])
+    run(
         ["git", "remote", "add", "origin", "{{ cookiecutter.project_remote }}"],
-        check=True,
     )
-    subprocess.run(
+    run(
         [
             "git",
             "remote",
@@ -127,10 +117,9 @@ def init_git():
             "origin",
             "{{ cookiecutter.project_remote }}",
         ],
-        check=True,
     )
 
-    subprocess.run(
+    run(
         [
             "git",
             "remote",
@@ -139,30 +128,12 @@ def init_git():
             "origin",
             "{{ cookiecutter.project_remote }}",
         ],
-        check=True,
     )
 
 
 @command_exists("direnv")
 def direnv_allow():
-    subprocess.run(["direnv", "allow"], check=True)
-
-
-def pre_commit_install(prefix=None):
-    if not prefix:
-        prefix = ["python", "-m"]
-    args = [
-        "pre_commit",
-        "install",
-        "--hook-type",
-        "pre-merge-commit",
-        "--install-hooks",
-        "--overwrite",
-    ]
-    subprocess.run(
-        prefix + args,
-        check=True,
-    )
+    run(["direnv", "allow"])
 
 
 if __name__ == "__main__":
@@ -179,27 +150,36 @@ if __name__ == "__main__":
     venv = "{{ cookiecutter.virtual_env }}"
 
     if venv == "anaconda":
-        create_conda()
-        pre_commit_install(
-            [
-                "conda",
-                "run",
-                "-n",
-                "{{ cookiecutter.project_slug }}",
-                "python",
-                "-m",
-            ],
-        )
+        prefix = create_conda()
     elif venv == "venv":
-        create_venv()
-        pre_commit_install(
-            prefix=[
-                ".{{ cookiecutter.project_slug }}/bin/python{{ cookiecutter.pyver }}",
-            ],
-        )
+        prefix = create_venv()
+        remove_file("environment.yml")
+
     else:
-        pass
-    if "{{ cookiecutter.use_direnv }}" == "y":
+        raise ValueError("a virtual env must be used")
+    run(
+        prefix + ["pip", "install"] + SETUP_DEPENDENCIES,
+    )
+
+    run(prefix + update_requirements())
+    run(prefix + update_requirements("dev"))
+    run(prefix + update_requirements("docs"))
+    run(prefix + update_requirements("tests"))
+
+    run(
+        prefix
+        + [
+            "pre_commit",
+            "install",
+            "--hook-type",
+            "pre-merge-commit",
+            "--install-hooks",
+            "--overwrite",
+        ],
+    )
+
+    if "{{ cookiecutter.create_envrc }}" == "y":
         direnv_allow()
     else:
-        subprocess.run(["rm", "-f", ".envrc"], check=True)
+        remove_file(".envrc")
+    run(prefix + ["pip", "install", "-e", ".[dev]"])
