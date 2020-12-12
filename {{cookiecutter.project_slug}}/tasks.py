@@ -1,20 +1,34 @@
-from invoke import task
 from pathlib import Path
 
-
-@task
-def update_requirement(ctx, in_file=None):
-    in_path = Path(in_file)
-    output_file = f"{in_path.parent / in_path.stem}.txt"
-    ctx.run(f"pip-compile --upgrade {in_file} --output-file={output_file}", pty=True)
+from invoke import task
 
 
 @task
-def update(ctx):
-    ctx.run("pip-compile --upgrade --output-file=./requirements/reqs.txt", pty=True)
-    update_requirement(ctx, "./requirements/dev.in")
-    update_requirement(ctx, "./requirements/docs.in")
-    update_requirement(ctx, "./requirements/tests.in")
+def update_requirement(ctx, in_path: Path = None, out_path: Path = None, upgrade=True):
+    if out_path is None:
+        if in_path is None:
+            raise ValueError("in_path and out_path can't be `None` at the same time")
+        out_path = f"{in_path.parent / in_path.stem}.txt"
+    args = ["pip-compile"]
+    if upgrade:
+        args.append("--upgrade")
+    if out_path:
+        args.append("--output-file={out_path}")
+
+    if in_path:
+        args.append(f"{in_path}")
+
+    ctx.run(" ".join(args), pty=True)
+
+
+@task
+def deps(ctx):
+    current_path = Path(__file__).absolute()
+    requirements_path = current_path / "requirements"
+    update_requirement(ctx, out_path=requirements_path / "reqs.txt")
+    update_requirement(ctx, in_path=requirements_path / "dev.in")
+    update_requirement(ctx, in_path=requirements_path / "docs.in")
+    update_requirement(ctx, in_path=requirements_path / "tests.in")
 
 
 @task

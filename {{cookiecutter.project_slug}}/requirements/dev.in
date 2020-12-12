@@ -1,9 +1,9 @@
 -c reqs.txt
 flake8
+wemake-python-styleguide
 yamllint
 black
 isort
 neovim
 jedi
-wemake-python-styleguide
 pytype

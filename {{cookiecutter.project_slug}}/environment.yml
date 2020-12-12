@@ -1,0 +1,11 @@
+name: {{ cookiecutter.project_slug }}
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python={{ cookiecutter.pyver }}
+  - pip
+  - pip:
+    - -r requirements/reqs.txt
+    - -e '.[all]'
