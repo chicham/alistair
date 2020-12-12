@@ -154,6 +154,8 @@ def pre_commit_install(prefix=None):
     args = [
         "pre_commit",
         "install",
+        "--hook-type",
+        "pre-merge-commit",
         "--install-hooks",
         "--overwrite",
     ]
