@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cp .jupyterlab/user-settings ~/.jupyter/lab/user-settings
