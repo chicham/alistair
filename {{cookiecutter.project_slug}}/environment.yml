@@ -6,6 +6,6 @@ channels:
 dependencies:
   - python={{ cookiecutter.pyver }}
   - pip
-  - pip:
-    - -r requirements.txt
-    - -r requirements/dev.txt
+  - invoke
+  - pip-compile
+  - pre-commit
