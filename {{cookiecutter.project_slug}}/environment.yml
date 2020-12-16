@@ -9,3 +9,17 @@ dependencies:
   - invoke
   - pip-compile
   - pre-commit
+  - sphinx
+  - sphinxcontrib-apidoc
+  - recommonmark
+  - nbsphinx
+  - ipykernel
+  - sphinx_rtd_theme
+  - black
+  - isort
+  - pytype
+  - yamlint
+  - jupyter-repo2docker
+  - pip:
+    - sphinxcontrib-katex==0.7.1
+    - wemake-python-styleguide
